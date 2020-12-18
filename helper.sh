@@ -5,13 +5,14 @@ die() {
 }
 dir="$HOME/.lenovo_v330_helper"
 if [ "$1" == remove ]; then rm -rf $dir; fi
+if [ "$1" == change ]; then rm -f $dir/distro; fi
 echo -e "Lenovo V330 Linux helper"
 if [ ! -f $dir/distro ]; then
 echo -e "\e[0;33m   Choose your Linux distro:\e[0m"
 cat <<EOF
 1. Arch Linux
 2. Ubuntu/Debian like
-	P.S. You can change it later, by executing ./helper.sh remove
+	P.S. You can change it later, by executing ./helper.sh change
 EOF
 read -rp "> " distro
 case "$distro" in
@@ -29,13 +30,13 @@ case "$distro" in
 		;;
 	2 | U* | D* | debian* | ubuntu*)
 		distro_=Deb
-		PM_install() {
+		PM_INSTALL() {
 			sudo apt install "$@" -y
 		}
-		PM_remove() {
+		PM_REMOVE() {
 			sudo apt purge "$@" -y
 		}
-		PM_query() {
+		PM_QUERY() {
 			if dpkg -s "$@" &>/dev/null; then return 0; else return 1; fi
 		}
 		;;
