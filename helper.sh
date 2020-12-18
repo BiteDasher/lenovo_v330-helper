@@ -156,7 +156,7 @@ EOF
 		fi
 		;;
 	4)
-		if [[ "$status3" = "O" ]]; then
+		if [[ "$status4" = "O" ]]; then
 			read -rp "This fix has already been applied. Restore to original condition? [y/N]: " ask
 			case "$ask" in "" | N* | n*) exit 0 ;; Y* | y*) RESTORE=1 ;; *) exit 1 ;; esac
 		else
