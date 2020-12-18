@@ -12,7 +12,7 @@ echo -e "\e[0;33m   Choose your Linux distro:\e[0m"
 cat <<EOF
 1. Arch Linux
 2. Ubuntu/Debian like
-	P.S. You can change it later, by executing ./helper.sh change
+	P.S. You can change it later, by executing $0 change
 EOF
 read -rp "> " distro
 case "$distro" in
