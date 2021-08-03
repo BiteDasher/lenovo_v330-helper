@@ -4,6 +4,10 @@ die() {
 	exit 1
 }
 dir="$HOME/.lenovo_v330_helper"
+if [ ! -d "$dir" ]; then
+	mkdir -p $dir
+	mkdir -p $dir/{status,backup}
+fi
 if [ "$1" == remove ]; then rm -rf $dir; fi
 if [ "$1" == change ]; then rm -f $dir/distro; fi
 echo -e "Lenovo V330 Linux helper"
@@ -18,27 +22,9 @@ read -rp "> " distro
 case "$distro" in
 	1 | A* | arch*)
 		distro_=Arch
-		PM_INSTALL() {
-			sudo pacman -S "$@" --noconfirm
-		}
-		PM_REMOVE() {
-			sudo pacman -Rs "$@" --noconfirm
-		}
-		PM_QUERY() {
-			if pacman -Qq "$@" &>/dev/null; then return 0; else return 1; fi
-		}
 		;;
 	2 | U* | D* | debian* | ubuntu*)
 		distro_=Deb
-		PM_INSTALL() {
-			sudo apt install "$@" -y
-		}
-		PM_REMOVE() {
-			sudo apt purge "$@" -y
-		}
-		PM_QUERY() {
-			if dpkg -s "$@" &>/dev/null; then return 0; else return 1; fi
-		}
 		;;
 	*)
 		echo "Unknown distribution."
@@ -48,10 +34,30 @@ esac
 [ -f $dir/distro ] || echo $distro_ > $dir/distro
 else distro_="$(cat $dir/distro)"
 fi
-if [ ! -d "$dir" ]; then
-	mkdir -p $dir
-	mkdir -p $dir/{status,backup}
-fi
+case "$distro_" in
+	Arch)
+		PM_INSTALL() {
+			sudo pacman -S "$@" --noconfirm
+		}
+		PM_REMOVE() {
+			sudo pacman -Rs "$@" --noconfirm
+		}
+		PM_QUERY() {
+			if pacman -Qq "$@" &>/dev/null; then return 0; else return 1; fi
+		}
+	;;
+	Deb)
+		PM_INSTALL() {
+			sudo apt install "$@" -y
+		}
+		PM_REMOVE() {
+			sudo apt purge "$@" -y
+		}
+		PM_QUERY() {
+			if dpkg -s "$@" &>/dev/null; then return 0; else return 1; fi
+		}
+	;;
+esac
 for status in 1 2 3 4 5 6 7 8 9; do
 	if [ -f $dir/status/$status ]; then
 		if [ "$(cat $dir/status/$status)" == 1 ]; then
